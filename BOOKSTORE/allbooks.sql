@@ -1,1 +1,45 @@
-SELECT cus.name, GGG.cat, GGG.language FROM ( SELECT BB.cid, GG.CAT, GG.language FROM(SELECT AA.cid, AA.cat, AA.language ,COUNT(*) AS COUNTBB FROM (select DISTINCT pur.cid, pur.title, pur.year, boo.cat, boo.language from yrb_purchase pur, yrb_book boo where pur.title = boo.title AND pur.year = boo.year AND (boo.cat , boo.language) IN (select cat, language from yrb_book boo GROUP BY cat, language HAVING COUNT(*)>1) ) AA GROUP BY (AA.cid, AA.cat, AA.language)) BB, (select cat, language, COUNT(*) AS COUNT from yrb_book boo GROUP BY cat, language HAVING COUNT(*)>1)GG WHERE GG.cat = BB.cat AND GG.language = BB.language AND BB.COUNTBB = GG.COUNT )GGG JOIN  yrb_customer cus ON cus.cid = GGG.cid ;
+SELECT cus.NAME, 
+       ggg.cat, 
+       ggg.language 
+FROM   ( 
+              SELECT bb.cid, 
+                     gg.cat, 
+                     gg.language 
+              FROM  ( 
+                              SELECT   aa.cid, 
+                                       aa.cat, 
+                                       aa.language , 
+                                       Count(*) AS countbb 
+                              FROM     ( 
+                                                       SELECT DISTINCT pur.cid, 
+                                                                       pur.title, 
+                                                                       pur.year, 
+                                                                       boo.cat, 
+                                                                       boo.language 
+                                                       FROM            yrb_purchase pur, 
+                                                                       yrb_book boo 
+                                                       WHERE           pur.title = boo.title 
+                                                       AND             pur.year = boo.year 
+                                                       AND             ( 
+                                                                                       boo.cat , boo.language) IN
+                                                                       ( 
+                                                                                SELECT   cat, 
+                                                                                         language 
+                                                                                FROM     yrb_book boo
+                                                                                GROUP BY cat, 
+                                                                                         language 
+                                                                                HAVING   Count(*)>1) ) AA
+                              GROUP BY (aa.cid, aa.cat, aa.language)) bb, 
+                     ( 
+                              SELECT   cat, 
+                                       language, 
+                                       count(*) AS count 
+                              FROM     yrb_book boo 
+                              GROUP BY cat, 
+                                       language 
+                              HAVING   count(*)>1)gg 
+              WHERE  gg.cat = bb.cat 
+              AND    gg.language = bb.language 
+              AND    bb.countbb = gg.count )ggg 
+JOIN   yrb_customer cus 
+ON     cus.cid = ggg.cid ;
