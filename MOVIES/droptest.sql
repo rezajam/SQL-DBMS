@@ -1,0 +1,11 @@
+drop table Person;
+drop table Actor;
+drop table Director;
+drop table Writer;
+drop table Studio;
+drop table ScreenPlay;
+drop table Authored;
+drop table Movie;
+drop table Cast;
+drop table Affiliated;
+drop trigger JohnDirectorTrigger;

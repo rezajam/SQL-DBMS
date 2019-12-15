@@ -1,0 +1,163 @@
+
+--creating tables:
+
+
+--Person(p#,name,birthdate,nationality,gender)
+create table Person (  
+	p smallint not null,
+	name VARCHAR(50),
+	birthdate DATE,
+	nationality varchar(50),
+	gender varchar(50),
+
+	constraint Person_PK 
+		primary key (p)  
+);
+
+
+-- Actor(p,aguild)
+-- 	FK (p) refs Person
+create table Actor(
+	p  smallint not null,
+	aguild VARCHAR(50),
+
+	constraint Actor_PK
+		primary key (p),
+	constraint Actor_FK_p
+		foreign key (p) references Person
+		-- on update cascade,
+		-- on delete cascade
+);
+
+
+-- Director(p#,dguild#)
+-- 	FK (p#) refs Person
+create table Director(
+	p smallint not null,
+	dguild VARCHAR(50),
+
+	constraint Director_PK
+		primary key (p),
+	constraint Director_FK_p
+		foreign key (p) references Person
+);
+
+-- Writer(p#, wguild#)
+-- 	FK (p#) refs Person
+create table Writer(
+	p smallint not null,
+	wguild VARCHAR(50),
+
+	constraint Writer_PK
+		primary key (p),
+	constraint Writer_FK_p
+		foreign key (p) references Person
+);
+
+
+-- Studio(name)
+create table Studio(
+	name VARCHAR(50) not null,
+
+	constraint Studio_PK
+		primary key (name)
+);
+
+
+-- ScreenPlay(title,year)
+create table ScreenPlay (
+	title VARCHAR(50) not null,
+	year smallint not null,
+
+	constraint ScreenPlay_PK
+		primary key (title,year)
+);
+
+
+-- Authored(title,year,writer)
+-- 	FK (title, year) refs ScreenPlay
+-- 	FK (writer) refs Writer (p#)
+create table Authored(
+	title VARCHAR(50) not null,
+	year smallint not null,
+	writer smallint not null,
+
+	constraint Authored_PK
+		primary key (title, year, writer),
+	constraint Authored_FK_title_year
+		foreign key (title, year) references ScreenPlay,
+	constraint Authored_FK_writer
+		foreign key (writer) references Writer(p)
+);
+
+
+-- Movie(title,studio,year,genre,director,length)
+-- 	FK (studio) refs Studio (name)
+-- 	FK (title, year) refs ScreenPlay
+-- 	FK (director) refs Director (p#)
+create table Movie(
+	title VARCHAR(50) not null,
+	studio VARCHAR(50) not null,
+	year smallint not null,
+	genre VARCHAR(50),
+	director smallint not null,
+	length smallint,
+
+	constraint Movie_PK
+		primary key (title, studio, year),
+	constraint Movie_FK_studio
+		foreign key (studio) references Studio(name),
+	constraint Movie_FK_title_year
+		foreign key (title, year) references ScreenPlay,
+	constraint Movie_FK_director
+		foreign key (director) references Director(p)
+		on delete cascade,
+	constraint Movie_Check_Director
+		check( (studio,director) IN  (SELECT (Aff.studio, aff.director)
+						   FROM Affiliated Aff
+						   WHERE Aff.director = Director AND aff.studio = studio)
+						   )
+	
+);
+--select m.title, m.studio, m.year, m.genre, m.director, m.length from Movie m, affiliated aff where m.director = aff.director AND aff.studio = m.studio
+
+-- Cast(title,studio,year,role,actor,minutes)
+-- 	FK (title, studio, year) refs Movie
+-- 	FK (actor) refs Actor (p#)
+create table Cast(
+	title VARCHAR(50) not null,
+	studio VARCHAR(50) not null,
+	year smallint not null,
+	role VARCHAR(50) not null,
+	actor smallint not null,
+	minutes smallint,
+
+	constraint Cast_PK
+		primary key (title, studio, year, role, actor),
+	constraint Cast_FK_title_studio_year
+		foreign key (title, studio, year) references Movie
+		on delete cascade,
+	constraint Cast_actor
+		foreign key (actor) references Actor(p)
+);
+
+
+-- Affiliated(director,studio)
+-- 	FK (director) refs Director (p#)
+-- 	FK (studio) refs Studio (name)
+create table Affiliated(
+	director smallint not null,
+	studio VARCHAR(50) not null,
+
+	constraint Affiliated_PK
+		primary key (director, studio),
+	constraint Affiliated_FK_director
+		foreign key (director) references Director(p)
+		on delete cascade,
+	constraint Affiliated_FK_studio
+		foreign key (studio) references Studio(name)
+
+);
+
+
+

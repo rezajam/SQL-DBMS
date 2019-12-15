@@ -1,0 +1,1 @@
+SELECT DISTINCT FF.namea, cus.name AS NAMEB FROM(SELECT GG.CIDA, GG.CIDB, cus.name AS NAMEA FROM(SELECT DISTINCT pur1.cid AS CIDA, pur2.cid AS CIDB FROM yrb_purchase pur1, yrb_purchase pur2 WHERE pur1.title = pur2.title AND pur1.year = pur2.year AND pur1.cid < pur2.cid)GG JOIN yrb_customer cus ON cus.cid = GG.CIDA)FF JOIN yrb_customer cus ON cus.cid = FF.CIDB ;

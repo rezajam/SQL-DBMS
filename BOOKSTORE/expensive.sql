@@ -1,0 +1,1 @@
+SELECT off.title, off.year, off.price FROM yrb_offer off WHERE off.price >=(SELECT AVG(GG.MAXPRICE) FROM (SELECT DD.club, MAX(DD.price) AS MAXPRICE FROM (SELECT * FROM yrb_offer off WHERE EXISTS ( SELECT boo.title , boo.year FROM yrb_book boo WHERE off.title = boo.title AND off.year = boo.year AND boo.language = 'English' ) )DD GROUP BY DD.CLUB )GG );
